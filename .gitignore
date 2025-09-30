@@ -1,0 +1,68 @@
+# Python .gitignore
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+*.log
+*.sqlite3
+*.db
+*.env
+.env*
+*.venv
+venv/
+ENV/
+.envrc
+.mypy_cache/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+*.swp
+*.bak
+*.tmp
+.coverage
+htmlcov/
+.tox/
+.cache/
+*.manifest
+*.spec
+*.rst
+*.swo
+*.orig
+*.lock
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Test and coverage
+coverage.xml
+nosetests.xml
+*.cover
+*.py,cover
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
+
+# Cython debug symbols
+cython_debug/

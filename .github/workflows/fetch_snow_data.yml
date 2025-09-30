@@ -1,0 +1,32 @@
+name: Fetch Snow Depth Data
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # Every day at 07:00 UTC
+  workflow_dispatch:
+
+jobs:
+  fetch-and-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run snow sensors CLI and save CSV
+        run: |
+          python -m snow_sensors.cli --output "snow_depth_daily_$(date -u +'%Y-%m-%dT%H-%M-%SZ').csv" --format csv
+
+      - name: Upload CSV artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: snow_depth_daily
+          path: snow_depth_daily_*.csv
