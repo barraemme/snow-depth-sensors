@@ -27,15 +27,15 @@ jobs:
 
       - name: Upload GeoJSON to MapTiler
         env:
-          MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
+          MAPTILER_TOKEN: ${{ secrets.MAPTILER_API_KEY }}
           MAPTILER_TILESET_ID: ${{ secrets.MAPTILER_TILESET_ID }}
         run: |
           if [ -n "$MAPTILER_TILESET_ID" ]; then
             echo "Updating existing tileset: $MAPTILER_TILESET_ID"
-            maptiler-cloud tiles ingest --document-id=$MAPTILER_TILESET_ID snow_depth_data.geojson --token $MAPTILER_API_KEY
+            maptiler-cloud tiles ingest --document-id=$MAPTILER_TILESET_ID snow_depth_data.geojson
           else
             echo "Creating new tileset"
-            maptiler-cloud tiles ingest snow_depth_data.geojson --token $MAPTILER_API_KEY
+            maptiler-cloud tiles ingest snow_depth_data.geojson
           fi
 
       - name: Upload GeoJSON artifact
