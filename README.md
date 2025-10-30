@@ -91,3 +91,25 @@ Some fields may be present only for specific regions. See the source code for de
 - pandas >= 1.5.0
 - requests >= 2.25.0
 - click >= 8.0.0
+- geopandas >= 0.10.0 (for GeoJSON export)
+
+## GitHub Action
+
+The project includes a GitHub Action workflow that automatically:
+1. Fetches snow depth data from South Tyrol sensors
+2. Generates a GeoJSON file
+3. Uploads the data to MapTiler using maptiler-cloud-cli
+
+The workflow runs daily at 07:00 UTC and can also be triggered manually.
+
+### Setup
+
+To use the automated workflow, add the following repository secrets:
+
+1. Go to your repository Settings → Secrets and variables → Actions
+2. Add `MAPTILER_API_KEY` - Your MapTiler API key (required)
+3. Add `MAPTILER_TILESET_ID` - Your existing tileset ID (optional)
+
+**First run:** If `MAPTILER_TILESET_ID` is not set, the workflow will create a new tileset and print the tileset ID. Copy this ID and add it as the `MAPTILER_TILESET_ID` secret for future runs.
+
+**Subsequent runs:** The workflow will update the existing tileset with fresh data.

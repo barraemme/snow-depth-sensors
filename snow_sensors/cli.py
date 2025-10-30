@@ -11,7 +11,7 @@ from . import retriever
 )
 @click.option(
     '--format', '-f',
-    type=click.Choice(['csv', 'json'], case_sensitive=False),
+    type=click.Choice(['csv', 'json', 'geojson'], case_sensitive=False),
     default='csv',
     help='Output format for saved file (default: csv)'
 )

@@ -1,6 +1,7 @@
 from .altoadige_data_fetcher import AltoAdigeDataFetcher
 from .trentino_data_fetcher import TrentinoDataFetcher
 import pandas as pd
+import geopandas as gpd
 import logging
 from pathlib import Path
 
@@ -42,6 +43,16 @@ def retrieve(date, output, format, timeout, verbose):
                 df.to_csv(output_path, index=False)
             elif format == 'json':
                 df.to_json(output_path, orient='records', date_format='iso')
+            elif format == 'geojson':
+                if 'latitude' in df.columns and 'longitude' in df.columns:
+                    gdf = gpd.GeoDataFrame(
+                        df,
+                        geometry=gpd.points_from_xy(df.longitude, df.latitude),
+                        crs='EPSG:4326',
+                    )
+                    gdf.to_file(output_path, driver='GeoJSON')
+                else:
+                    raise ValueError("DataFrame must contain 'latitude' and 'longitude' columns for GeoJSON format.")
             logging.info(f"✅ Data saved successfully to {output_path}")
         except Exception as e:
             logging.error(f"❌ Error saving file: {e}")

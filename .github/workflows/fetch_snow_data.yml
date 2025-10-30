@@ -1,12 +1,12 @@
-name: Fetch Snow Depth Data
+name: Fetch Snow Depth Data and Upload to MapTiler
 
 on:
   schedule:
-    - cron: '0 7 * * *' # Every day at 07:00 UTC
+    - cron: "0 7 * * *" # Every day at 07:00 UTC
   workflow_dispatch:
 
 jobs:
-  fetch-and-save:
+  fetch-and-upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -15,18 +15,31 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install -r requirements.txt
 
-      - name: Run snow sensors CLI and save CSV
+      - name: Fetch snow depth data and generate GeoJSON
         run: |
-          python -m snow_sensors.cli --output "snow_depth_daily_$(date -u +'%Y-%m-%dT%H-%M-%SZ').csv" --format csv
+          python -m snow_sensors.cli --output snow_depth_data.geojson --format geojson
 
-      - name: Upload CSV artifact
+      - name: Upload GeoJSON to MapTiler
+        env:
+          MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
+          MAPTILER_TILESET_ID: ${{ secrets.MAPTILER_TILESET_ID }}
+        run: |
+          if [ -n "$MAPTILER_TILESET_ID" ]; then
+            echo "Updating existing tileset: $MAPTILER_TILESET_ID"
+            maptiler-cloud tiles ingest --document-id=$MAPTILER_TILESET_ID snow_depth_data.geojson --token $MAPTILER_API_KEY
+          else
+            echo "Creating new tileset"
+            maptiler-cloud tiles ingest snow_depth_data.geojson --token $MAPTILER_API_KEY
+          fi
+
+      - name: Upload GeoJSON artifact
         uses: actions/upload-artifact@v4
         with:
-          name: snow_depth_daily
-          path: snow_depth_daily_*.csv
+          name: snow_depth_geojson
+          path: snow_depth_data.geojson
