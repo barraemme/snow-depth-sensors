@@ -8,6 +8,9 @@ on:
 jobs:
   fetch-and-upload:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,9 +24,9 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Fetch snow depth data and generate GeoJSON
+      - name: Fetch snow depth data, upload to Supabase, and generate GeoJSON
         run: |
-          python -m snow_sensors.cli --output snow_depth_data.geojson --format geojson
+          python -m snow_sensors.cli --output snow_depth_data.geojson --format geojson --supabase
 
       - name: Upload GeoJSON to MapTiler
         env:

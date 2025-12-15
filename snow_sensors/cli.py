@@ -27,11 +27,16 @@ from . import retriever
     help='Measurement date in YYYY-MM-DD format (default: today)',
 )
 @click.option(
+    '--supabase',
+    is_flag=True,
+    help='Upload data to Supabase (requires SUPABASE_URL and SUPABASE_SERVICE_KEY env vars)'
+)
+@click.option(
     '--verbose', '-v',
     is_flag=True,
     help='Enable verbose output'
 )
-def main(output, format, timeout, date, verbose):
+def main(output, format, timeout, date, supabase, verbose):
     """
     Fetch snow depth sensor data from South Tyrol weather service.
     
@@ -40,7 +45,14 @@ def main(output, format, timeout, date, verbose):
     """
     
     try:
-        retriever.retrieve(date=date, output=output, format=format, timeout=timeout, verbose=verbose)
+        retriever.retrieve(
+            date=date,
+            output=output,
+            format=format,
+            timeout=timeout,
+            verbose=verbose,
+            upload_supabase=supabase
+        )
         click.echo(f"\n✅ Operation completed successfully!")
     except Exception as e:
         click.echo(f"❌ Error: {e}", err=True)
